@@ -102,6 +102,7 @@
     "accesors.IPlayerMoveC2SPacket",
     "accesors.IPlayerPositionLookS2CPacket",
     "accesors.ISPacketEntityVelocity",
-    "accesors.ISPacketPlayerPosLook"
+    "accesors.ISPacketPlayerPosLook",
+    "MixinInventoryScreen"
   ]
 }

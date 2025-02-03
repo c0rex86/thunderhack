@@ -15,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import thunder.hack.core.Managers;
 import thunder.hack.core.manager.client.ModuleManager;
 import thunder.hack.injection.accesors.IInteractionManager;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.screen.slot.SlotActionType;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +26,7 @@ import static thunder.hack.features.modules.Module.mc;
 
 public final class InventoryUtility {
     private static int cachedSlot = -1;
+    private static final MinecraftClient mc = MinecraftClient.getInstance();
 
     public static int getItemCount(Item item) {
         if (mc.player == null) return 0;
@@ -410,5 +413,31 @@ public final class InventoryUtility {
 
     public interface Searcher {
         boolean isValid(ItemStack stack);
+    }
+
+    public static void drop(int slot) {
+        if (mc.player == null) return;
+        
+        // Выбрасываем предмет из слота
+        mc.interactionManager.clickSlot(
+            mc.player.currentScreenHandler.syncId,
+            slot,
+            0,
+            SlotActionType.THROW,
+            mc.player
+        );
+    }
+
+    public static void dropStack(int slot) {
+        if (mc.player == null) return;
+        
+        // Выбрасываем весь стак с помощью правого клика
+        mc.interactionManager.clickSlot(
+            mc.player.currentScreenHandler.syncId,
+            slot,
+            1, // правый клик
+            SlotActionType.THROW,
+            mc.player
+        );
     }
 }
