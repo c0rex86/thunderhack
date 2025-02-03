@@ -261,9 +261,6 @@ public class ModuleManager implements IManager {
     public static FOV fov = new FOV();
     public static ESP esp = new ESP();
     public static RPC rpc = new RPC();
-    public static BuildHelper buildHelper = new BuildHelper();
-    public static AutoBridge autoBridge = new AutoBridge();
-    public static WallBuilder wallBuilder = new WallBuilder();
 
     public ModuleManager() {
         for (Field field : getClass().getDeclaredFields()) {
