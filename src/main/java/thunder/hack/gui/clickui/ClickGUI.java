@@ -227,6 +227,12 @@ public class ClickGUI extends Screen {
                 GLFW.glfwSetCursor(mc.getWindow().getHandle(), GLFW.glfwCreateStandardCursor(GLFW.GLFW_ARROW_CURSOR));
             }
 
+        // Добавляем watermark
+        FontRenderers.sf_medium.drawString(context.getMatrices(), 
+            "made by c0re <3", 
+            mc.getWindow().getScaledWidth() - FontRenderers.sf_medium.getStringWidth("made by c0re <3") - 5,
+            mc.getWindow().getScaledHeight() - 15,
+            HudEditor.getColor(0).getRGB());
     }
 
     @Override
