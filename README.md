@@ -2,30 +2,11 @@
     <img src="https://i.imgur.com/ZiJ0r7y.png" style="width: 69%">
 </p>
 
+У чита/клиента будут добавлены функции из delta/нурика и тому подобных клиентов.
+
 > [!WARNING]
-> Work on ThunderHack Recode is completely stopped, 
-> it will be replaced by CatLean, a new free client
-> with closed source code and higher quality modules,
-> you can follow CatLean in my [Discord server](https://discord.gg/PvBhPWdkVD)
-
-<div align="center">
-<img src="https://cdn.discordapp.com/attachments/934396624111824900/1230019159027617792/furro.gif?ex=6631cb9c&is=661f569c&hm=b6cee2cd9b6ec238f54c80dcfc421f2c8ecd3f750f2f61a62087d1e01d201e4d&" style="width: 69%">
-</div>
-
-
-<div align="center">
-
-[![Discord Mine](https://img.shields.io/discord/1140266441082404924?label=discord&logo=discord&logoColor=white)](https://discord.gg/PvBhPWdkVD)
-
-</div>
-
-
-# Cya 04.04.23 - 9.10.24 project!
-<div align="center">
-<img src="assets/U03-01-20-U12-05-01-14.png">
-</div>
-
-## Information
+> This client is not supported by the off developer(Pan4ur).
+> Ныне, я буду вести разработку этого клиента.
 
 - Minecraft version: ```Fabric``` 1.21 (or whatever version's the latest)
 - Default ClickGui keybind - **```P```** (<--- it is not, you should go to the Discord server and ask for the real keybind)
@@ -38,10 +19,7 @@
 - [FabricApi 1.21](https://www.curseforge.com/minecraft/mc-mods/fabric-api/files/5531908)
 - [Java 21+](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html)
 
-## Recommended to read:
 
-- [Performance guide for Minecraft 1.20.4+ Clients](https://gist.github.com/HexedHero/aab340a84db51913cb1106c2d85f4e4f)
-- [Setup guide by @DevilishRak](https://thunderguidemc.vercel.app/)
 
 ## Credits
 
@@ -50,27 +28,8 @@
 - [@meteordevelopment](https://github.com/meteordevelopment) for orbit
 - [@ladysnake](https://github.com/ladysnake) for satin
 - [@0x3C50](https://github.com/0x3C50/Renderer) for the renderer
-
-## Screenshots
-<details>
-<summary>GUI</summary>
-
-![image](assets/1.png)
-</details>
-<details>
-<summary>CRYSTAL HVH</summary>
-
-![image](assets/2.png)
-![image](assets/3.png)
-![image](assets/4.png)
-</details>
-<details>
-<summary>SWORD HVH</summary>
-
-![image](assets/5.gif)
-</details>
-
-![image](https://github.com/Pan4ur/ThunderHack-Recode/assets/82473048/1e56338f-58a1-4759-8234-858878bdde3f)
+- [@cvs0](https://github.com/cvs0) for the addon template
+- [@Pan4ur](https://github.com/Pan4ur) for the base of the client
 
 ## Addons
 
