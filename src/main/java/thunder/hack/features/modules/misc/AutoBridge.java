@@ -109,8 +109,8 @@ public class AutoBridge extends Module {
         
         // Для диагонального моста
         if (diagonal.getValue()) {
-            dx = bridgeDirection.getOffsetX() + (bridgeDirection.rotateClockwise(Direction.Axis.Y).getOffsetX());
-            dz = bridgeDirection.getOffsetZ() + (bridgeDirection.rotateClockwise(Direction.Axis.Y).getOffsetZ());
+            dx = bridgeDirection.getOffsetX() + (bridgeDirection.rotateYClockwise().getOffsetX());
+            dz = bridgeDirection.getOffsetZ() + (bridgeDirection.rotateYClockwise().getOffsetZ());
         }
         
         // Генерируем позиции для моста
@@ -118,15 +118,15 @@ public class AutoBridge extends Module {
             for (int j = -(w/2); j <= w/2; j++) {
                 BlockPos pos;
                 if (diagonal.getValue()) {
-                    pos = startPos.add(dx * i + j * bridgeDirection.rotateClockwise(Direction.Axis.Y).getOffsetX(),
+                    pos = startPos.add(dx * i + j * bridgeDirection.rotateYClockwise().getOffsetX(),
                                      -1,
-                                     dz * i + j * bridgeDirection.rotateClockwise(Direction.Axis.Y).getOffsetZ());
+                                     dz * i + j * bridgeDirection.rotateYClockwise().getOffsetZ());
                 } else {
                     pos = startPos.add(dx * i,
                                      -1,
-                                     dz * i).add(bridgeDirection.rotateClockwise(Direction.Axis.Y).getOffsetX() * j,
+                                     dz * i).add(bridgeDirection.rotateYClockwise().getOffsetX() * j,
                                                0,
-                                               bridgeDirection.rotateClockwise(Direction.Axis.Y).getOffsetZ() * j);
+                                               bridgeDirection.rotateYClockwise().getOffsetZ() * j);
                 }
                 placePositions.add(pos);
                 
