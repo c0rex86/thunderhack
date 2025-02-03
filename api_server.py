@@ -6,7 +6,7 @@ import threading
 import re
 
 app = Flask(__name__)
-
+#мама, хде я
 online_data = {
     "online": 0,
     "max_online": 0,
