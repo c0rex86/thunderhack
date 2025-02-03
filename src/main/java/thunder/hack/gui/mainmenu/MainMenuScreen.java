@@ -94,7 +94,7 @@ public class MainMenuScreen extends Screen {
 
         onlineText:
         {
-            String onlineUsers = String.format("online: %s%s", Formatting.DARK_GREEN, Managers.TELEMETRY.getOnlinePlayers().size());
+            String onlineUsers = String.format("online: %s%s/%s", Formatting.DARK_GREEN, Managers.TELEMETRY.getOnlineCount(), Managers.TELEMETRY.getMaxOnline());
 
             FontRenderers.sf_bold.drawCenteredString(context.getMatrices(), onlineUsers, halfOfWidth, halfOfHeight * 2 - 15, Color.GREEN);
 
@@ -107,7 +107,6 @@ public class MainMenuScreen extends Screen {
             context.getMatrices().translate(halfOfWidth - 10 - FontRenderers.sf_medium.getStringWidth(onlineUsers) / 2f, halfOfHeight * 2 - 17, 0);
             Render2DEngine.drawBloom(context.getMatrices(), Render2DEngine.applyOpacity(Color.GREEN, (float) (0.5f + (Math.sin((double) System.currentTimeMillis() / 500)) / 2f)), 9f);
             context.getMatrices().pop();
-
         }
 
         Render2DEngine.drawHudBase(context.getMatrices(), mc.getWindow().getScaledWidth() - 40, mc.getWindow().getScaledHeight() - 40, 30, 30, 5, Render2DEngine.isHovered(mouseX, mouseY, mc.getWindow().getScaledWidth() - 40, mc.getWindow().getScaledHeight() - 40, 30, 30) ? 0.7f : 1f);
@@ -121,7 +120,7 @@ public class MainMenuScreen extends Screen {
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
         int offsetY = 10;
-        for (String change : ThunderUtility.changeLog) {
+        for (String change : Managers.TELEMETRY.getChangelog()) {
             String prefix = getPrefix(change);
             FontRenderers.sf_medium.drawString(context.getMatrices(), prefix, 10, offsetY, Render2DEngine.applyOpacity(-1, 0.4f));
             offsetY += 10;
@@ -178,10 +177,16 @@ public class MainMenuScreen extends Screen {
             mc.setScreen(CreditsScreen.getInstance());
 
         if (Render2DEngine.isHovered(mouseX, mouseY, mc.getWindow().getScaledWidth() - 90, mc.getWindow().getScaledHeight() - 40, 40, 40))
-            Util.getOperatingSystem().open(URI.create("https://www.donationalerts.com/r/06ed/"));
+            Util.getOperatingSystem().open(URI.create("https://t.me/c0re_x64"));
 
         if (Render2DEngine.isHovered(mouseX, mouseY, (int) (halfOfWidth - 157), (int) (halfOfHeight - 140), 300, 70))
-            Util.getOperatingSystem().open(URI.create("https://thunderhack-site.vercel.app/"));
+            Util.getOperatingSystem().open(URI.create("https://github.com/c0rex86/thunderhack"));
+
+        if (Render2DEngine.isHovered(mouseX, mouseY, mc.getWindow().getScaledWidth() - 40, mc.getWindow().getScaledHeight() - 40, 30, 30))
+            Util.getOperatingSystem().open(URI.create("https://github.com/c0rex86/thunderhack"));
+
+        if (Render2DEngine.isHovered(mouseX, mouseY, mc.getWindow().getScaledWidth() - 80, mc.getWindow().getScaledHeight() - 40, 30, 30))
+            Util.getOperatingSystem().open(URI.create("https://t.me/c0re_x64"));
 
         return super.mouseClicked(mouseX, mouseY, button);
     }
