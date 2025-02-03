@@ -23,21 +23,32 @@ public class AutoFarm extends Module {
     private final Setting<Integer> radius = new Setting<>("Radius", 3, 1, 5);
     private final Setting<Integer> actionsPerTick = new Setting<>("ActionsPerTick", 4, 1, 10);
     private final Setting<Integer> maxBoneMealTries = new Setting<>("MaxBoneMealTries", 3, 1, 10);
+    private final Setting<Integer> waterCheckRadius = new Setting<>("WaterCheckRadius", 4, 1, 8);
+    private final Setting<Integer> minToolDurability = new Setting<>("MinToolDurability", 20, 1, 100);
     private final Setting<Boolean> debug = new Setting<>("Debug", false);
     private final Setting<Boolean> tillGround = new Setting<>("TillGround", true);
     private final Setting<Boolean> harvestCrops = new Setting<>("HarvestCrops", true);
     private final Setting<Boolean> replantCrops = new Setting<>("ReplantCrops", true);
     private final Setting<Boolean> useBoneMeal = new Setting<>("UseBoneMeal", true);
+    private final Setting<Boolean> autoWater = new Setting<>("AutoWater", true);
+    private final Setting<Boolean> protectTools = new Setting<>("ProtectTools", true);
+    private final Setting<Boolean> smartRotation = new Setting<>("SmartRotation", true);
     private final Setting<Boolean> autoSwitch = new Setting<>("AutoSwitch", true);
     private final Setting<Boolean> render = new Setting<>("Render", true);
+    private final Setting<Boolean> carrotsEnabled = new Setting<>("Carrots", true);
+    private final Setting<Boolean> potatoesEnabled = new Setting<>("Potatoes", true);
+    private final Setting<Boolean> beetrootsEnabled = new Setting<>("Beetroots", true);
+    private final Setting<Boolean> wheatEnabled = new Setting<>("Wheat", true);
     private final Setting<Color> harvestColor = new Setting<>("HarvestColor", new Color(255, 0, 0, 100), v -> render.getValue());
     private final Setting<Color> plantColor = new Setting<>("PlantColor", new Color(0, 255, 0, 100), v -> render.getValue());
     private final Setting<Color> tillColor = new Setting<>("TillColor", new Color(139, 69, 19, 100), v -> render.getValue());
     private final Setting<Color> boneMealColor = new Setting<>("BoneMealColor", new Color(200, 200, 200, 100), v -> render.getValue());
+    private final Setting<Color> waterNeededColor = new Setting<>("WaterNeededColor", new Color(0, 0, 255, 100), v -> render.getValue());
     
     private final Set<BlockPos> harvestBlocks = new HashSet<>();
     private final Set<BlockPos> plantBlocks = new HashSet<>();
     private final Set<BlockPos> tillBlocks = new HashSet<>();
+    private final Set<BlockPos> waterNeededBlocks = new HashSet<>();
     private final Map<BlockPos, Integer> boneMealBlocks = new HashMap<>();
     private int currentSlot = -1;
     private BlockPos basePos = null;
@@ -150,6 +161,7 @@ public class AutoFarm extends Module {
         plantBlocks.clear();
         tillBlocks.clear();
         boneMealBlocks.clear();
+        waterNeededBlocks.clear();
         
         for (int x = -radius.getValue(); x <= radius.getValue(); x++) {
             for (int z = -radius.getValue(); z <= radius.getValue(); z++) {
@@ -158,16 +170,23 @@ public class AutoFarm extends Module {
                 
                 Block block = mc.world.getBlockState(pos).getBlock();
                 
-                if (harvestCrops.getValue() && block instanceof CropBlock) {
+                // Проверка на воду для фермерской земли
+                if (block instanceof FarmlandBlock && !hasWaterNearby(pos)) {
+                    waterNeededBlocks.add(pos);
+                }
+                
+                if (harvestCrops.getValue() && block instanceof CropBlock && isValidCrop(block)) {
                     CropBlock crop = (CropBlock) block;
                     if (crop.isMature(mc.world.getBlockState(pos))) {
                         harvestBlocks.add(pos);
                     } else if (useBoneMeal.getValue() && hasBoneMeal()) {
                         boneMealBlocks.put(pos, 0);
                     }
-                } else if (replantCrops.getValue() && block instanceof FarmlandBlock && mc.world.getBlockState(pos.up()).getBlock() instanceof AirBlock) {
+                } else if (replantCrops.getValue() && block instanceof FarmlandBlock && 
+                         mc.world.getBlockState(pos.up()).getBlock() instanceof AirBlock &&
+                         hasWaterNearby(pos)) {
                     plantBlocks.add(pos);
-                } else if (tillGround.getValue() && canTill(pos)) {
+                } else if (tillGround.getValue() && canTill(pos) && hasWaterNearby(pos)) {
                     tillBlocks.add(pos);
                 }
             }
@@ -249,6 +268,12 @@ public class AutoFarm extends Module {
         for (BlockPos pos : boneMealBlocks.keySet()) {
             Box box = new Box(pos);
             Render3DEngine.drawFilledBox(stack, box, boneMealColor.getValue());
+        }
+        
+        // Рендерим блоки, требующие воды
+        for (BlockPos pos : waterNeededBlocks) {
+            Box box = new Box(pos);
+            Render3DEngine.drawFilledBox(stack, box, waterNeededColor.getValue());
         }
     }
     
@@ -337,8 +362,51 @@ public class AutoFarm extends Module {
         mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, hit);
     }
     
+    private boolean isValidCrop(Block block) {
+        return (wheatEnabled.getValue() && block == Blocks.WHEAT) ||
+               (carrotsEnabled.getValue() && block == Blocks.CARROTS) ||
+               (potatoesEnabled.getValue() && block == Blocks.POTATOES) ||
+               (beetrootsEnabled.getValue() && block == Blocks.BEETROOTS);
+    }
+
+    private boolean hasWaterNearby(BlockPos pos) {
+        for (int x = -waterCheckRadius.getValue(); x <= waterCheckRadius.getValue(); x++) {
+            for (int z = -waterCheckRadius.getValue(); z <= waterCheckRadius.getValue(); z++) {
+                BlockPos checkPos = pos.add(x, 0, z);
+                Block block = mc.world.getBlockState(checkPos).getBlock();
+                if (block == Blocks.WATER || block == Blocks.WATER_CAULDRON) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isToolDamaged(ItemStack stack) {
+        if (!protectTools.getValue()) return false;
+        return stack.getItem() instanceof HoeItem && 
+               ((stack.getMaxDamage() - stack.getDamage()) * 100 / stack.getMaxDamage()) < minToolDurability.getValue();
+    }
+
+    private ItemStack findBestSeedForBlock(BlockPos pos) {
+        if (!smartRotation.getValue()) return null;
+        
+        Block block = mc.world.getBlockState(pos).getBlock();
+        for (int i = 0; i < 9; i++) {
+            ItemStack stack = mc.player.getInventory().getStack(i);
+            if ((block == Blocks.WHEAT && stack.getItem() == Items.WHEAT_SEEDS) ||
+                (block == Blocks.CARROTS && stack.getItem() == Items.CARROT) ||
+                (block == Blocks.POTATOES && stack.getItem() == Items.POTATO) ||
+                (block == Blocks.BEETROOTS && stack.getItem() == Items.BEETROOT_SEEDS)) {
+                return stack;
+            }
+        }
+        return null;
+    }
+    
     @Override
     public String getDisplayInfo() {
-        return harvestBlocks.size() + "/" + plantBlocks.size() + "/" + tillBlocks.size() + "/" + boneMealBlocks.size();
+        return harvestBlocks.size() + "/" + plantBlocks.size() + "/" + tillBlocks.size() + "/" + 
+               boneMealBlocks.size() + (waterNeededBlocks.isEmpty() ? "" : "/W" + waterNeededBlocks.size());
     }
 } 
