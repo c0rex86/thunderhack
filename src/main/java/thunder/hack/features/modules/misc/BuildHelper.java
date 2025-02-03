@@ -195,7 +195,7 @@ public class BuildHelper extends Module {
     }
 
     private boolean canPlace(BlockPos pos) {
-        return mc.world.getBlockState(pos).getMaterial().isReplaceable();
+        return mc.world.getBlockState(pos).isAir();
     }
 
     private void placeBlock(BlockPos pos) {
